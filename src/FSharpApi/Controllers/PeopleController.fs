@@ -1,17 +1,22 @@
 module PeopleController
 
 open PeopleRepository
-open FSharp.Control.Tasks.V2.ContextInsensitive
 open Giraffe.HttpStatusCodeHandlers.RequestErrors
 open Giraffe
 
-let getPeople =
-    json listPeople
+type PersonNotFound = { statusCode: int; error: string}
 
-let getPerson (firstName: string) =
-    match getPersonWithFirstName firstName with
-    | Some x -> json x
-    | None -> setStatusCode 404
+let personNotFound msg =
+    notFound (json { statusCode = 404; error = msg})
+
+let matchPersonQueryResult person =
+    match person with
+    | Ok x -> json x
+    | Error msg -> personNotFound msg
+
+let getPersonByFirstName (firstName: string) =
+    getPersonWithFirstName firstName
+    |> matchPersonQueryResult
 
 let addPerson =
     json []
@@ -19,8 +24,8 @@ let addPerson =
 let getRoutes : (List<HttpHandler>) = [
         GET >=>
             choose [
-                route "/people" >=> getPeople
-                routef "/people/%s" getPerson
+                route "/people" >=> json listPeople
+                routef "/people/%s" getPersonByFirstName
             ]
     ]
 

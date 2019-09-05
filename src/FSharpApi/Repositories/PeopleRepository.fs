@@ -3,7 +3,6 @@ module PeopleRepository
 open System
 open Dapper
 open System.Data.SqlClient
-open FSharp.Control.Tasks.V2.ContextInsensitive
 
 type PersonType =
     | IN
@@ -75,7 +74,7 @@ let getPersonWithFirstName (firstName: string) =
         connection.QueryFirstAsync<Person>(sql, { firstName = firstName })
         |> Async.AwaitTask
         |> Async.RunSynchronously
-        |> Some
+        |> Ok
     with
-    | :? AggregateException -> None
-    | :? InvalidOperationException -> None
+    | :? AggregateException -> Error("Failed to find person")
+    | :? InvalidOperationException -> Error("Invalid Operation")
