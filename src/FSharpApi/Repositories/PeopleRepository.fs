@@ -56,34 +56,26 @@ let mapToPersonDto (person: Person) : PersonDto =
         ModifiedDate = person.ModifiedDate
     }
     
-
-let mapToPersonDtoList (person: Person list) : PersonDto list =
-    person
-    |> List.map mapToPersonDto
-    
-
 let connectionString = "Server=localhost,1433;Database=AdventureWorks2017;User Id=sa;Password=yourStrong(!)Password;"
 let connection = new SqlConnection(connectionString)
 
 let listPeople =
-    task {
-        let sql = "SELECT TOP 100 * FROM Person.Person"
-        let! result = connection.QueryAsync<Person>(sql)
-        return result
-        |> List.ofSeq
-        |> mapToPersonDtoList
-    }
+    let sql = "SELECT TOP 100 * FROM Person.Person"
+    connection.QueryAsync<Person>(sql)
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+    |> List.ofSeq
+    |> List.map mapToPersonDto
 
 type PersonWithFirstNameParam = { firstName: string }
 
 let getPersonWithFirstName (firstName: string) =
-    task {
-        let sql = "SELECT * FROM Person.Person WHERE FirstName = @firstName"
-        try 
-            let! result = connection.QueryFirstAsync<Person>(sql, { firstName = firstName })
-            return Some(result)
-        with
-        | :? InvalidOperationException -> return None
-    }
-    
-
+    let sql = "SELECT * FROM Person.Person WHERE FirstName = @firstName"
+    try 
+        connection.QueryFirstAsync<Person>(sql, { firstName = firstName })
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
+        |> Some
+    with
+    | :? AggregateException -> None
+    | :? InvalidOperationException -> None

@@ -5,27 +5,13 @@ open FSharp.Control.Tasks.V2.ContextInsensitive
 open Giraffe.HttpStatusCodeHandlers.RequestErrors
 open Giraffe
 
-type Person =
-    {
-        FirstName : string;
-        LastName : string
-    }
-
 let getPeople =
-    fun next ctx ->
-        task {
-            let! result = listPeople
-            return! json result next ctx
-        }
+    json listPeople
 
 let getPerson (firstName: string) =
-    fun next ctx ->
-        task {
-            let! result = (getPersonWithFirstName firstName)
-            match result with
-            | Some x -> return! json x next ctx
-            | None -> return! setStatusCode 404 next ctx
-        }
+    match getPersonWithFirstName firstName with
+    | Some x -> json x
+    | None -> setStatusCode 404
 
 let addPerson =
     json []
