@@ -67,7 +67,7 @@ let connection = new SqlConnection(connectionString)
 
 let listPeople =
     task {
-        let sql = "SELECT TOP 0 * FROM Person.Person"
+        let sql = "SELECT TOP 100 * FROM Person.Person"
         let! result = connection.QueryAsync<Person>(sql)
         return result
         |> List.ofSeq
