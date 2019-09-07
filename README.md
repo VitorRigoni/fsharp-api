@@ -29,3 +29,19 @@ dotnet run src/FSharpApi
 ```
 
 After the application has started visit [http://localhost:5000](http://localhost:5000) in your preferred browser.
+
+## Docker
+
+Run the docker-compose file.
+`docker-compose up`
+
+This will create the application and the db with a restore of `AdventureWorks2017` database. But theres a catch!
+
+Wait until the database is fully up and restored before retrieving any endpoint. Because of how F# works, if you try to retrieve the /people endpoint before the database is fully up it'll throw an exception and won't recover from it.
+If that happens, restart the app container after the db is fully up.
+
+On docker, the app will start at port 5001: [http://localhost:5001](http://localhost:5001)
+
+## Swagger
+
+Swagger is available. Use [http://localhost:5000/swagger](http://localhost:5000/swagger) to open the docs.

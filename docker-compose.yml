@@ -1,0 +1,20 @@
+version: "3"
+services:
+  db:
+    build:
+      context: ""
+      dockerfile: db.Dockerfile
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "yourStrong(!)Password"
+    ports:
+      - "1433:1433"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "5001:80"
