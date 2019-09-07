@@ -70,8 +70,6 @@ let webApp =
         POST >=> choose ([] @ postRoutes)
         setStatusCode 404 >=> text "Not Found"
         setStatusCode 405 >=> text "Invalid method" ]
-        
-        
 
 // ---------------------------------
 // Error handler
