@@ -39,5 +39,3 @@ This will create the application and the db with a restore of `AdventureWorks201
 
 Wait until the database is fully up and restored before retrieving any endpoint. Because of how F# works, if you try to retrieve the /people endpoint before the database is fully up it'll throw an exception and won't recover from it.
 If that happens, restart the app container after the db is fully up.
-
-On docker, the app will start at port 5001: [http://localhost:5001](http://localhost:5001)
