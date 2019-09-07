@@ -54,8 +54,9 @@ let mapToPersonDto (person: Person) : PersonDto =
         LastName = person.LastName
         ModifiedDate = person.ModifiedDate
     }
-    
-let connectionString = "Server=localhost,1433;Database=AdventureWorks2017;User Id=sa;Password=yourStrong(!)Password;"
+
+// This will come from the app settings later, of course
+let connectionString = "Server=db;Database=AdventureWorks;User Id=sa;Password=yourStrong(!)Password;"
 let connection = new SqlConnection(connectionString)
 
 let listPeople =
