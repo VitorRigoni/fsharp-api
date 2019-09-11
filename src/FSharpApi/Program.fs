@@ -49,26 +49,35 @@ module Views =
 // Web app
 // ---------------------------------
 
-let indexHandler (name : string) =
-    let greetings = sprintf "Hello %s, from Giraffe!" name
-    let model     = { Text = greetings }
-    let view      = Views.index model
-    htmlView view
+let setText txt =
+    { Text = txt }
 
-let jsonIndexHandler (name: string) =
-    let greetings = sprintf "Hello %s, from Giraffe!" name
-    json { Text = greetings }
+let indexHandler name =
+    name
+    |> sprintf "Hello %s, from Giraffe!"
+    |> setText
+    |> Views.index
+    |> htmlView
+
+let jsonIndexHandler name =
+    name
+    |> sprintf "Hello %s, from Giraffe!"
+    |> setText
+    |> json 
 
 let personNotFound msg =
-    notFound (json { statusCode = 404; error = msg})
+    { statusCode = 404; error = msg }
+    |> json
+    |> notFound
 
 let matchPersonQueryResult person =
     match person with
     | Ok x -> json x
     | Error msg -> personNotFound msg
 
-let getPersonByFirstName (firstName: string) =
-    getPersonWithFirstName firstName
+let getPersonByFirstName firstName =
+    firstName
+    |> getPersonWithFirstName
     |> matchPersonQueryResult
 
 let webApp =
@@ -88,7 +97,8 @@ let webApp =
 // ---------------------------------
 
 let errorHandler (ex : Exception) (logger : ILogger) =
-    logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
+    (ex, "An unhandled exception has occurred while executing the request.")
+    |> logger.LogError
     clearResponse >=> setStatusCode 500 >=> text ex.Message
 
 // ---------------------------------
