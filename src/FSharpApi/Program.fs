@@ -7,17 +7,16 @@ open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
-open PeopleController
+open Repository
 open Giraffe
+open Giraffe.HttpStatusCodeHandlers.RequestErrors
 
 // ---------------------------------
 // Models
 // ---------------------------------
 
-type Message =
-    {
-        Text : string
-    }
+type Message = { Text : string }
+type PersonNotFound = { statusCode: int; error: string}
 
 // ---------------------------------
 // Views
@@ -60,14 +59,27 @@ let jsonIndexHandler (name: string) =
     let greetings = sprintf "Hello %s, from Giraffe!" name
     json { Text = greetings }
 
+let personNotFound msg =
+    notFound (json { statusCode = 404; error = msg})
+
+let matchPersonQueryResult person =
+    match person with
+    | Ok x -> json x
+    | Error msg -> personNotFound msg
+
+let getPersonByFirstName (firstName: string) =
+    getPersonWithFirstName firstName
+    |> matchPersonQueryResult
+
 let webApp =
     choose [
         GET >=>
             choose ([
-                route "/" >=> warbler (fun _ -> jsonIndexHandler "world")
+                route "/" >=> jsonIndexHandler "world"
                 routef "/hello/%s" indexHandler
-            ] @ getRoutes)
-        POST >=> choose ([] @ postRoutes)
+                route "/people" >=> json listPeople
+                routef "/people/%s" getPersonByFirstName
+            ])
         setStatusCode 404 >=> text "Not Found"
         setStatusCode 405 >=> text "Invalid method" ]
 

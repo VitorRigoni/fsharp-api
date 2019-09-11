@@ -1,4 +1,4 @@
-module PeopleRepository
+module Repository
 
 open System
 open Dapper

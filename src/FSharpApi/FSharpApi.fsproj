@@ -16,8 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Repositories/*" />
-    <Compile Include="Controllers/*" />
+    <Compile Include="Repository.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
