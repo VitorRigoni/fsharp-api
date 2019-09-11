@@ -16,7 +16,7 @@ open Giraffe.HttpStatusCodeHandlers.RequestErrors
 // ---------------------------------
 
 type Message = { Text : string }
-type PersonNotFound = { statusCode: int; error: string}
+type PersonNotFound = { statusCode: int; error: string }
 
 // ---------------------------------
 // Views
